@@ -1,0 +1,39 @@
+#
+# RESTful API methods for Koha Commander
+#
+
+Method:		GET
+URL: 		/{API_BASE}/
+Function:	Get a WSDL or other machine-readable list of functions
+
+Method:		GET
+URL: 		/{API_BASE}/instance/
+Function:	Get a list of all Koha instances accessible by the user
+
+Method:		GET
+URL: 		/{API_BASE}/instance/{instance_name}
+Function:	Get details and status info on the selected Koha instance
+
+Method:		PUT
+URL: 		/{API_BASE}/instance/{instance_name}
+Function:	Create a new Koha instance with provided name
+
+Method:		POST
+URL: 		/{API_BASE}/instance/{instance_name}
+Function:	Manage Koha instance - actions in POST body
+
+Method:		DELETE
+URL: 		/{API_BASE}/instance/{instance_name}
+Function:	Delete Koha instance
+
+
+##	Functions for clients without PUT /  DELETE capability
+
+Method:		POST
+URL: 		/{API_BASE}/instance/add
+Function:	Create a new Koha instance (details in POST body)
+
+Method:		POST
+URL: 		/{API_BASE}/instance/{instance_name}/delete
+Function:	Delete Koha instance
+	

@@ -2,12 +2,5 @@ KohaCommander - a web interface and RESTful API for managing Koha instances crea
 
 This is a very young project. The current code represents only the barest bones, and should not be considered a functional release.
 
-To INSTALL
-
-Everything under /sbin goes in your /usr/sbin directory
-Replace your default Apache site config with the one provided in /apache-config/default-site
-The /usr/sbin/KohaCommander needs to be readable by your Apache user
-
-You will also need pwauth, as well a number of Perl modules. 
-Specific requirements are in flux, and documentation of dependencies will follow once things settle down.
-
+This initial code may be the last to run as the regular Apache user, at least on a server that hosts Koha instances.
+Since koha-common uses mpm-itk anyway, this shouldn't be a big deal.

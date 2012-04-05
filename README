@@ -1,6 +1,7 @@
-KohaCommander - a web interface and RESTful API for managing Koha instances created with koha-common
+KohaCommander - a web interface and RESTful API for managing Koha instances created by koha-common
 
 This is a very young project. The current code represents only the barest bones, and should not be considered a functional release.
 
-This initial code may be the last to run as the regular Apache user, at least on a server that hosts Koha instances.
-Since koha-common uses mpm-itk anyway, this shouldn't be a big deal.
+See INSTALL.txt for installation instructions.
+
+For an idea of what to expect as Koha Commander develops, see GOALS.txt.

@@ -1,11 +1,10 @@
-# Core Koha Commander package - holds settings, constants, etc.
+# Core package - holds settings, constants, etc.
 
 package KohaCommander ;
 
 use strict;
 use warnings;
 
-# Path to your koha-common site root
 use constant KOHA_SITE_ROOT => '/etc/koha/sites/' ;
 
 # Default web interface files - comment this out to fall back to your vhost's DocumentRoot

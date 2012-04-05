@@ -1,0 +1,42 @@
+#
+# Goals for the Koha Commander project
+#
+
+Architecture goals
+	Provide secure access for users to manage hosted Koha instances
+	Allow (limited) self-service provisioning of Koha instances
+	Allow self-service management of instances by non-root users
+	Allow access to Koha backups / dumps by non-root users
+	Enable scalability by creating a secure interface for servers
+		running KohaCommander to move instances and share roles
+
+RESTful web service
+	Accept HTTP Basic auth or POST param
+	Require authentication for access to all resources
+	Make all resources available in XML or JSON
+	Implement WSDL or equivalent resource discovery option
+	
+Web Interface
+	Implement Form-based login with session state
+	Present Public-access home, login, and help pages with editable template files
+	Require authentication for all other resources
+	Provide landing page for self-service provisioning of unclaimed instance names
+
+Flexible authentication (authn) system
+	Allow use of Linux user database (out of the box)
+	Provide a set of reference implementations for other authn backends
+	Provide a simple API for user-supplied authn backends
+
+Flexible authorization (authz) system
+	Allow flexible mapping of user accounts to instances
+	Allow flexible assignment of instance privileges and roles to users
+	Provide a simple API for user-supplied authz backends
+	
+Management features
+	Enable creating / removing / managing Koha instances on local server
+	Enable interaction with web service on another server running KohaCommander
+		Remote management
+		Move instances between servers
+	Provide auditing of instance operations (create, remove, enable, etc.)
+	Support automated provisioning of instances with database on a remote server
+	Support automated provisioning of instances owned by an existing user

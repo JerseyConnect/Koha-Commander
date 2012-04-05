@@ -1,19 +1,20 @@
 <VirtualHost *:80>
 
 	ServerAdmin		admin@localhost
-	# AssignUserID	
+	ServerName		SERVER_HOSTNAME
+	AssignUserID	KOHA_COMMANDER_USER KOHA_COMMANDER_GROUP
 	
 	#
 	# Settings for Koha Commander admin site
 	#
-	PerlRequire 	/usr/sbin/KohaCommander/startup.pl
+	PerlRequire 	KOHA_COMMANDER_PATH/startup.pl
 	PerlInitHandler	KohaCommander::Init
 	
 	<Location />
 
 		AuthType 		Basic
 		AuthName 		"Koha Commander API"
-		AuthUserFile	"/usr/sbin/KohaCommander/demo_user"
+		AuthUserFile	"KOHA_COMMANDER_PATH/demo_user"
 		Require 		valid-user
 		
 	</Location>

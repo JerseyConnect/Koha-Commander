@@ -1,9 +1,0 @@
-INSTALL INSTRUCTIONS
-
-Everything under /sbin goes in your /usr/sbin directory
-Replace your default Apache site config with the one provided in /apache-config/default-site
-The /usr/sbin/KohaCommander needs to be readable by your Apache user
-
-You will also need pwauth, as well a number of Perl modules. 
-Specific requirements are in flux, and documentation of dependencies will follow once things settle down.
-

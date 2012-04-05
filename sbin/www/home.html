@@ -1,4 +1,23 @@
 <body>
 	<h1>KohaCommander</h1>
-	<p>This page is informational.</p>
+	<p>Welcome to Koha Commander! This program provides web access to your hosted Koha instance, 
+		allowing you to manage properties not exposed through the built-in management screens.</p>
+	<p>If your service provider allows it, you may also use this system to provision one or more new instances.</p>
+	[% IF auth.hasInstances %]
+	<h2>My Koha Instances</h2>
+	<ul>
+		[% FOREACH instance = auth.canBrowseInstances %]
+		<li></li>
+		[% END %]
+	</ul>
+	[% END %]
+	<ul class="menu options-menu">
+		<li>
+			[% IF logged_in %]
+			<a href="/login?logout">Log out</a>
+			[% ELSE %]
+			<a href="/login">Log in</a>
+			[% END %]
+		</li>
+	</ul>
 </body>

@@ -18,8 +18,8 @@ use Data::Dumper ;
 
 our $session_id ;
 our $session_params = {
-	Directory		=> '/tmp/sessions',
-	LockDirectory	=> '/tmp/sessions'
+	Directory		=> '/tmp/koha-commander-sessions',
+	LockDirectory	=> '/tmp/koha-commander-sessions'
 };
 
 sub handler{

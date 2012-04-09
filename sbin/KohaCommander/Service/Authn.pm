@@ -1,8 +1,11 @@
+# KohaCommander Authentication package
+# This script checks the supplied user credentials against your authentication backend
+#  to determine whether the user is valid
 
 package KohaCommander::Service::Authn ;
 
-use strict;
-use warnings;
+use strict ;
+use warnings ;
   
 use Apache2::Access ;
 use Apache2::RequestUtil ;
@@ -25,7 +28,7 @@ sub handler{
 		
 	}
 	
-	$req->note_basic_auth_failure ;
+	$req->note_basic_auth_failure() ;
 	return Apache2::Const::HTTP_UNAUTHORIZED ;
 }
 

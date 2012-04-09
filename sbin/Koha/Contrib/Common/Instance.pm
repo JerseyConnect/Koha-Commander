@@ -9,6 +9,8 @@ use warnings ;
 use Koha::Contrib::Common ;
 use Koha::Contrib::Common::Settings ;
 
+use fields qw( name enabled mail_enabled indexer_started mysql_host mysql_schema ) ;
+
 our $error_msg = '' ;
 
 =head1 NAME
@@ -18,6 +20,30 @@ A package for managing Koha instances created with koha-create
 =head1 METHODS
 
 =cut
+
+=head2 init ( $instance name )
+Create a Koha instance object
+
+=cut
+sub init{
+	my Koha::Contrib::Common::Instance $self = shift ;
+	
+	unless ( ref $self ) {
+		$self = fields::new( $self ) ;
+		$self->{name} = '' ;
+		$self->{enabled} = 0 ;
+	}
+	
+	# Would love to combine these two lines, but strict hates it
+	if( my $instance_name = shift) {
+		if( $self->exists( $instance_name ) ) {
+			$self->{name} = $instance_name ; 
+			$self->get_instance_data() ;
+		}
+	}
+	
+	return $self ;
+}
 
 =head2 exists ( $instance name )
 Check for a Koha instance by the name specified
@@ -105,6 +131,27 @@ Delete a Koha instance
 
 =cut
 sub restore{
+	
+}
+
+sub get_instance_data{
+	
+	my Koha::Contrib::Common::Instance $self = shift ;
+	
+	# Make sure we have the instance name so we can proceed
+	return 0 unless $self->{name} ;
+	
+	# TODO: Check whether this instance is enabled
+	
+	
+	# Check whether this instance has mail enabled
+	$self->{ mail_enabled } = (-e Koha::Contrib::Common::KOHA_SERVER_ROOT . '/' . $self->{name} . '/email.enabled' );
+	
+	# TODO: Check status of indexer for this instance
+	# Get userid of associated user
+	# Run ps -U <userid> and capture PIDs of daemon and zebrasrv
+	# $is_running = kill 0, <PID>;
+	
 	
 }
 

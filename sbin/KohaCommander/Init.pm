@@ -38,6 +38,8 @@ sub handler{
 		
 		# If the user is requesting a particular isntance, note that for authz module
 		if( my ( $instance_name, $sep, $action ) = $req->uri() =~ m/instance\/([^\/]+)(\/?)(.*?)$/ ) {
+
+			$req->pnotes( 'path_info'			=> $action	) ;
 			
 			if( $req->method() eq 'PUT' ) {
 			

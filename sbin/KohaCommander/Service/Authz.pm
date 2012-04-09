@@ -1,3 +1,4 @@
+# KohaCommander Authorization package
 # Verify that the user (who has already authenticated) can access the requested instance(s)
 
 package KohaCommander::Service::Authz ;

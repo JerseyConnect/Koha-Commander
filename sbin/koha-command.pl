@@ -18,9 +18,6 @@ my $instance_name = shift || '' ;
 
 # Catch requests for help
 if( $action =~ /^([\-]*)help$/ ) {
-	die 'Here is my usage info!' . "\n" ;
-}
-if( $action eq 'help' || $action eq '--help' ) {
 	die 'Here is my usage info.' . "\n" ;
 }
 

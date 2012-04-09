@@ -5,7 +5,9 @@ package Koha::Contrib::Common ;
 use constant VERSION => 1 ;
 
 use constant KOHA_SYSTEM_ROOT => '/etc/koha' ;
-use constant KOHA_SITE_ROOT => '/etc/koha/sites' ;
+use constant KOHA_SITE_ROOT   => '/etc/koha/sites' ;
+use constant KOHA_SERVER_ROOT  => '/var/lib/koha' ;
+
 
 use strict ;
 use warnings ;

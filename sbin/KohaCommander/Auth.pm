@@ -51,12 +51,24 @@ sub getUserInfo{
 # ---------------------------------------------------------------------
 #
 
+# Return all available info on the current or selected instance
+sub getInstanceInfo{
+	
+	my KohaCommander::Auth $self = shift ;
+
+	if( my $instance_name = shift ) {
+		$currentInstance = KohaCommander::Auth::Instance->init( $instance_name ) ;
+	}
+
+	return $currentInstance;
+}
+
 # Return whether user has access to any Koha instances
 # Return number of accessible instances or 0 if none
 sub hasInstances{
 
 	my KohaCommander::Auth $self = shift ;
-	return 1 ;
+	return $currentUser->{is_admin} ;
 }
 
 # Return 'all', an array of available instance names, or false if not authorized

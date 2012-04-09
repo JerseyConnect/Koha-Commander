@@ -5,6 +5,8 @@
 package KohaCommander::Auth::Instance ;
 
 use KohaCommander qw( :common ) ;
+use Koha::Contrib::Common ;
+
 use fields qw( instance_name instance_id status ) ;
 
 sub init{
@@ -84,7 +86,7 @@ sub scanForUser{
 	my KohaCommander::Auth::Instance $self = shift ;
 	my $user_name = shift ;
 
-	my $path = KohaCommander::KOHA_SITE_ROOT . $self->{instance_name} ;
+	my $path = Koha::Contrib::Common::KOHA_SITE_ROOT . $self->{instance_name} ;
 	my $xp = XML::XPath->new( filename => $path . '/koha-conf.xml' ) ;
 	my $username = $xp->findvalue( '/yazgfs/config/user' ) ;
 

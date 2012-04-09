@@ -4,6 +4,7 @@
 
 package KohaCommander::Auth::User ;
 use KohaCommander qw( :common ) ;
+use Koha::Contrib::Common ;
 
 use XML::XPath ;
 
@@ -76,12 +77,12 @@ sub scanForUser{
 	my KohaCommander::Auth::User $self = shift ;
 	my $user_name = shift ;
 
-	my $path = KohaCommander::KOHA_SITE_ROOT ;
+	my $path = Koha::Contrib::Common::KOHA_SITE_ROOT ;
 	
 	chomp (my @dir = `ls $path`);
 	foreach $site_name ( @dir ) {
 		
-		my $xp = XML::XPath->new( filename => KohaCommander::KOHA_SITE_ROOT . $site_name . '/koha-conf.xml' );
+		my $xp = XML::XPath->new( filename => Koha::Contrib::Common::KOHA_SITE_ROOT . $site_name . '/koha-conf.xml' );
 
 		my $username = $xp->findvalue( '/yazgfs/config/user' ) ;
 		my $password = $xp->findvalue( '/yazgfs/config/pass' ) ;

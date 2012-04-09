@@ -8,6 +8,9 @@ use POSIX qw( ttyname ) ;
 
 use fields qw( user_name user_id group_id is_admin ) ;
 
+# Use this constant to define which groups contain admins - admins will be allowed access to any instance, and can create / delete
+use constant ADMIN_GROUPS => qw( admin adm ) ;
+
 sub init{
 
 	my KohaCommander::Auth::User $self = shift ;
@@ -111,6 +114,21 @@ sub getUserDetails{
 		$self->{group_id} = $gid ;
 		$self->{is_admin} = 0 ;
 	
+		return $self unless ADMIN_GROUPS ;
+		
+		foreach $admin_group (ADMIN_GROUPS) {
+			my ($gname,$passwd,$gid,$members) = getgrnam( $admin_group );
+			@members = split( ' ', $members ) ;
+			
+			for( @members ) {
+				if( $name eq $_ ) {
+					$self->{is_admin} = 1 ;
+					last ;
+					return $self ;
+				}
+			}
+		}
+		
 	}
 	
 }

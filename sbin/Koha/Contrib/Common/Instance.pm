@@ -28,6 +28,9 @@ sub exists{
 	
 	my ( $self, $instance_name ) = @_ ;
 	
+	# Sanitize instance name
+	$instance_name =~ s/[\W]//g ;
+	
 	my $instance_path = Koha::Contrib::Common->KOHA_SITE_ROOT . '/' . $instance_name ;
 
 	return 0 unless(-d $instance_path ) ;

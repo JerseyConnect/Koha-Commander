@@ -8,6 +8,7 @@ use strict;
 use warnings;
 
 use KohaCommander ;
+use Koha::Contrib::Common ;
 use Koha::Contrib::Common::Instance ;
 
 use fields qw( instance_name instance_id status owner_id group_id ) ;
@@ -88,7 +89,7 @@ sub get_instance_data{
 	my KohaCommander::Auth::Instance $self = shift ;
 
 #	my $sites_path = "/etc/koha/sites" ;
-	my $sites_path = KohaCommander::KOHA_SITE_ROOT ;
+	my $sites_path = Koha::Contrib::Common::KOHA_SITE_ROOT ;
 	my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($sites_path . $self->{instance_name} . '/') ;
 	
 	if( $uid && $gid ) {

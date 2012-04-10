@@ -7,7 +7,7 @@ use warnings;
 
 use Apache2::Request ;
 use Apache2::Directive ;
-use Apache2::Const -compile => qw( DECLINED OK HTTP_MOVED_TEMPORARILY HTTP_NOT_FOUND ) ;
+use Apache2::Const -compile => qw( DECLINED OK HTTP_MOVED_TEMPORARILY HTTP_NOT_FOUND HTTP_FORBIDDEN ) ;
 use Apache::Session::File ;
 use Template qw( :template );
 
@@ -154,7 +154,18 @@ sub handler{
 		
 	} else {
 		
-		die 'Caught unauthenticated access attempt for: ' . $path . $file_name ;
+		# Your choice - throw 403, load error page in place, or redirect to login
+
+#		return Apache2::Const::HTTP_FORBIDDEN ;
+#		die 'Caught unauthenticated access attempt for: ' . $path . $file_name ;
+		
+		$path = '' ;
+		$file_name = 'error' ;
+
+		push @tmpl_messages, { 
+			class => 'error', 
+			text  => 'You do not have access to the page you requested'
+		} ;
 		
 		# If user hasn't logged in, redirect to the login page
 		#$req->err_headers_out->add('Location'	=> '/login') ;
@@ -247,9 +258,12 @@ sub login{
 sub logout{
 	
 	# set session cookie to reflect logged out
+	set_session( {
+		logged_in	=> 0
+	} ) ;
 	
 	# delete session cookie
-	
+	destroy_session();
 }
 
 sub init_session{
@@ -260,7 +274,7 @@ sub init_session{
 
 	my $cookie = $r->headers_in->{'Cookie'} ;
 	if( defined( $cookie ) && $cookie ne '' ) {
-		$cookie =~ s/SESSION_ID=(\w*)/$1/;
+		$cookie =~ s/^SESSION_ID=(\w+)(\;.+)?/$1/;
 	}
 	
 	if ( defined $cookie && $cookie ne '' ) {
@@ -269,8 +283,27 @@ sub init_session{
 
 	if( scalar keys %session == 0 ) {
 	
-		warn 'Building a session with key: ' . $cookie ;
-		tie %session, 'Apache::Session::File', $cookie, $session_params;
+		warn 'Trying to build a session with key: ' . $cookie ;
+		
+		my ($err);
+		{
+			local $@;
+			%session = eval {
+				my %sess ;
+				tie %sess, 'Apache::Session::File', $cookie, $session_params;
+				return %sess ;
+			} ;
+			$err = $@;
+		}
+		if( $err ) {
+			warn 'There was an error building your session' ;
+			
+			undef $cookie ;
+			undef %session ;
+			tie %session, 'Apache::Session::File', $cookie, $session_params;
+		}
+		
+#		tie %session, 'Apache::Session::File', $cookie, $session_params;
 		
 	}
 

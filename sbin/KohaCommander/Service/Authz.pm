@@ -47,14 +47,17 @@ sub handler{
 		
 		
 		if( $action eq 'getInstance' && KohaCommander::Auth->canViewInstance( $instance_name ) ) {
+			$req->pnotes( 'instance'	=> KohaCommander::Auth->getInstanceInfo() );
 			return Apache2::Const::OK ;
 		}
 		
 		if( $action eq 'manageInstance' && KohaCommander::Auth->canManageInstance( $instance_name ) ) {
+			$req->pnotes( 'instance'	=> KohaCommander::Auth->getInstanceInfo() );
 			return Apache2::Const::OK ;
 		}
 		
 		if( $action eq 'deleteInstance' && KohaCommander::Auth->canDeleteInstance( $instance_name ) ) {
+			$req->pnotes( 'instance'	=> KohaCommander::Auth->getInstanceInfo() );
 			return Apache2::Const::OK ;
 		}
 	}

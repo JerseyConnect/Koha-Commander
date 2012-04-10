@@ -71,7 +71,8 @@ sub handler{
 	init_session( $req ) ;
 	warn '.. done.' ;
 	
-	my $session_cookie = "SESSION_ID=$session_id";
+	my $session_cookie = "SESSION_ID=$session_id; Path=/;";
+	
 	$req->headers_out->{"Set-Cookie"} = $session_cookie;
 	$req->err_headers_out->{"Set-Cookie"} = $session_cookie;
 	

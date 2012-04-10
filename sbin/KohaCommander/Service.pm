@@ -32,4 +32,29 @@ sub handler{
 	
 }
 
+sub listInstances{
+	
+	my ( $self, $req ) =  @_ ;
+	
+	my $user = KohaCommander::Auth->getUserInfo() ;
+	
+	
+	
+}
+
+#
+# Get info on the requested instance, or on a property of that instance specified in the path info
+#
+sub getInstance{
+	
+	my ( $self, $req ) =  @_ ;
+	
+	my $instance = $req->pnotes('instance') ;
+	my $instance_name = $req->pnotes('requested_object') ;
+	my $path_info = $req->pnotes('path_info') ;
+	
+	$req->print( 'Getting info for instance: ' . $instance ) ;
+	
+}
+
 1 ;

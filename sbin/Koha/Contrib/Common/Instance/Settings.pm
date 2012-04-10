@@ -21,7 +21,13 @@ sub init{
 		$instance_name = $instance ;
 		
 		my $path = Koha::Contrib::Common::KOHA_SITE_ROOT . '/' . $instance_name ;
-		$xpath = XML::XPath->new( filename => $path . '/koha-conf.xml' ) ;
+		
+		if( open FILE, $path . '/koha-conf.xml' ) {
+			close FILE ;
+			$xpath = eval{
+				return XML::XPath->new( filename => $path . '/koha-conf.xml' ) ;
+			} ;
+		}
 	}
 	
 	return $self ;
@@ -33,6 +39,7 @@ sub read{
 	
 	return 0 unless $instance_name ;
 	return 0 unless $setting_name ;
+	return 0 unless $xpath ;
 	
 	$setting_name = '/yazgfs/config/' . $setting_name
 		unless $setting_name =~ m/^\// ;

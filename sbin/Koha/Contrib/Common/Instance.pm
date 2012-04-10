@@ -159,11 +159,14 @@ sub get_instance_data{
 
 	# 2 - Check that closed sign isn't up in vhost
 	if( $self->{ enabled } ) {
-		open FILE, "</etc/apache2/sites-available/" . $instance_name ;
-		my $file_contents = do { local $/; <FILE> };
-
-		if( $file_contents =~ m/\n[^\#]+apache-shared-disable/ ) {
-			$self->{ enabled } = 0 ;
+		if(	open FILE, "</etc/apache2/sites-available/" . $instance_name ) {
+				
+			my $file_contents = do { local $/; <FILE> };
+	
+			if( $file_contents =~ m/\n[^\#]+apache-shared-disable/ ) {
+				$self->{ enabled } = 0 ;
+			}
+			close FILE or warn 'There was an error closing the file handle';
 		}
 	}
 	

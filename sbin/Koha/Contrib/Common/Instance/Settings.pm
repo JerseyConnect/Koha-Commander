@@ -20,11 +20,11 @@ sub init{
 		
 		$instance_name = $instance ;
 		
-		my $path = Koha::Contrib::Common::KOHA_SITE_ROOT . $instance_name ;
+		my $path = Koha::Contrib::Common::KOHA_SITE_ROOT . '/' . $instance_name ;
 		$xpath = XML::XPath->new( filename => $path . '/koha-conf.xml' ) ;
 	}
 	
-	return $instance_name ne '' ;
+	return $self ;
 }
 
 # Retrieve a setting from the Koha instance config file

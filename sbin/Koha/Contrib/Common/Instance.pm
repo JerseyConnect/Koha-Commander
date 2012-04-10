@@ -8,8 +8,9 @@ use warnings ;
 
 use Koha::Contrib::Common ;
 use Koha::Contrib::Common::Settings ;
+use Koha::Contrib::Common::Instance::Settings ;
 
-use fields qw( name enabled mail_enabled indexer_started mysql_host mysql_schema ) ;
+use fields qw( name settings user enabled mail_enabled indexer_running mysql_host mysql_port mysql_schema mysql_user ) ;
 
 our $error_msg = '' ;
 
@@ -30,14 +31,16 @@ sub init{
 	
 	unless ( ref $self ) {
 		$self = fields::new( $self ) ;
-		$self->{name} = '' ;
-		$self->{enabled} = 0 ;
+		$self->{ name } = '' ;
+		$self->{ enabled } = 0 ;
 	}
 	
 	# Would love to combine these two lines, but strict hates it
 	if( my $instance_name = shift) {
 		if( $self->exists( $instance_name ) ) {
-			$self->{name} = $instance_name ; 
+			
+			$self->{ name } = $instance_name ;
+			$self->{ settings } = Koha::Contrib::Common::Instance::Settings->init( $instance_name );
 			$self->get_instance_data() ;
 		}
 	}
@@ -69,8 +72,8 @@ sub exists{
 =head2 create ( $instance name, %params )
 Create a new Koha instance - return 1 if successful, or sets class var $error_msg and returns 0 if failed
 
-Params is a hash with one or more of the following keys:
-	adminuser	=>
+Params is a hashref with one or more of the following keys:
+	username	=>
 	db-op		=> create|populate|request
 	configfile	=> 
 	defaultsql	=>
@@ -81,16 +84,16 @@ Params is a hash with one or more of the following keys:
 
 sub create{
 	
-	my ( $self, $instance_name, %params ) = @_ ;
+	my ( $self, $instance_name, $params ) = @_ ;
 	
 }
 
-=head2 delete ( $instance name )
+=head2 remove ( $instance name )
 Delete a Koha instance
 
 =cut
 
-sub delete{
+sub remove{
 	
 }
 
@@ -134,25 +137,74 @@ sub restore{
 	
 }
 
+=head2 get_instance_data ()
+Get details about a Koha instance
+
+=cut
 sub get_instance_data{
 	
 	my Koha::Contrib::Common::Instance $self = shift ;
 	
+	my $instance_name = shift || $self->{ name };
+	
 	# Make sure we have the instance name so we can proceed
 	return 0 unless $self->{name} ;
 	
-	# TODO: Check whether this instance is enabled
+	#----------------------------------------
+	# Check whether this instance is enabled
+	#
 	
+	# 1 - Check that link exists in sites-enabled directory
+	$self->{ enabled } = (-l '/etc/apache2/sites-enabled/' . $instance_name ) ;
+
+	# 2 - Check that closed sign isn't up in vhost
+	if( $self->{ enabled } ) {
+		open FILE, "</etc/apache2/sites-available/" . $instance_name ;
+		my $file_contents = do { local $/; <FILE> };
+
+		if( $file_contents =~ m/\n[^\#]+apache-shared-disable/ ) {
+			$self->{ enabled } = 0 ;
+		}
+	}
 	
+	#----------------------------------------------
 	# Check whether this instance has mail enabled
+	#
+	
 	$self->{ mail_enabled } = (-e Koha::Contrib::Common::KOHA_SERVER_ROOT . '/' . $self->{name} . '/email.enabled' );
 	
-	# TODO: Check status of indexer for this instance
-	# Get userid of associated user
-	# Run ps -U <userid> and capture PIDs of daemon and zebrasrv
-	# $is_running = kill 0, <PID>;
+	#-------------------------------------------------
+	# Check status of indexer for this instance
+	#
 	
+	# 1 - Get userid of associated user
+	my $uid = getpwnam( ($self->{user} || $instance_name) );
 	
+	# Fall back to koha-common user naming if name passed was invalid
+	$uid = getpwnam( ( $instance_name . '-koha' ) ) unless $uid ;
+
+	# 2 - Run ps -U <userid> and capture PIDs of daemon and zebrasrv
+	chomp (my @procs = `ps -o pid -U $uid --no-headers -C zebrasrv -C daemon`);
+	$self->{ indexer_running } = scalar(@procs) > 0 ;
+	
+	if( $self->{ indexer_running } ) {
+		foreach my $proc (@procs) {
+			if( $proc =~ m/([\d]+)/ ) {
+				my $pid = $1 ;
+				# 3 - $is_running = kill 0, <PID>;
+				$self->{ indexer_running } = $self->{ indexer_running } and kill 0, $pid ;
+				
+			}
+		}
+	}
+	
+	#----------------------------------------------------
+	# Get details from the koha-conf.xml file
+	#
+	$self->{ mysql_host }   = $self->{ settings }->read('hostname') ;
+	$self->{ mysql_port }   = $self->{ settings }->read('port') ;
+	$self->{ mysql_schema } = $self->{ settings }->read('database') ;
+	$self->{ mysql_user }   = $self->{ settings }->read('user') ;
 }
 
 1 ;

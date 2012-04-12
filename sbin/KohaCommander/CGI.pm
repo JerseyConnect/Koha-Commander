@@ -73,9 +73,6 @@ sub handler{
 	
 	my $session_cookie = "SESSION_ID=$session_id; Path=/;";
 	
-	$req->headers_out->{"Set-Cookie"} = $session_cookie;
-	$req->err_headers_out->{"Set-Cookie"} = $session_cookie;
-	
 	# If user requested file from a subdirectory, change the path for that template
 	$path = substr( $path, 1 ) ;
 	
@@ -83,6 +80,8 @@ sub handler{
 	# Check whether user is attempting to log out
 	#
 	if( $req->param('logout') ) {
+		
+		warn 'Trying to logout' ;
 		
 		if( logout( $req ) ) {
 			
@@ -93,6 +92,8 @@ sub handler{
 				class => 'info', 
 				text => 'Logged out successfully'
 			} ;
+			
+			$session_cookie .= ' Expires=Thu, 01 Jan 1970 00:00:01 GMT;' ;
 			
 		}
 		
@@ -108,8 +109,6 @@ sub handler{
 		if( login( $req ) ) {
 
 			warn 'Log in succeeeded' ;
-			
-#			die Dumper( %session ) ;
 			
 			# If user has logged in, redirect to the home page
 			$req->err_headers_out->add('Location'	=> '/home') ;
@@ -141,6 +140,10 @@ sub handler{
 		}
 		
 	}
+
+	warn 'Setting cookie: ' . $session_cookie ;
+	$req->headers_out->{"Set-Cookie"} = $session_cookie;
+	$req->err_headers_out->{"Set-Cookie"} = $session_cookie;
 
 	# Add URIs to this whitelist to allow unregistered access
 	my @public_uris = qw( home login help ) ;
@@ -178,14 +181,14 @@ sub handler{
 
 	# BAD - generates a valid Hashref that can be included in an array def but cannot be push'd onto one
 #	my $message = {
-#		class	=> 'c',
-#		text	=> 'Wawawa'
+#		class	=> 'info',
+#		text	=> 'This is a test'
 #	} ;
 
 	# GOOD - generates a valid Hash that can be pushed onto an array 
 #	my %message = (
-#		class	=> 'c',
-#		text	=> 'Wawawa'
+#		class	=> 'info',
+#		text	=> 'This is a test'
 #	) ;
 
 #	my @messages = [
@@ -225,6 +228,8 @@ sub is_logged_in{
 	
 #	die %session ;
 	
+	warn 'Checking whether user is logged in' ;
+	
 	if( scalar( keys %session ) && $session{logged_in} ) {
 		return 1 ;
 	}
@@ -258,13 +263,19 @@ sub login{
 
 sub logout{
 	
+	warn 'Changing session contents' ;
+	
 	# set session cookie to reflect logged out
-	set_session( {
+	return set_session( {
 		logged_in	=> 0
 	} ) ;
 	
-	# delete session cookie
-	destroy_session();
+	warn 'Trying to destroy session' ;
+	
+	# TODO: delete session cookie - currently throws 500 error and keeps re-initiating session
+	# destroy_session();
+	
+	return 1 ;
 }
 
 sub init_session{
@@ -274,6 +285,9 @@ sub init_session{
 	my %session ;
 
 	my $cookie = $r->headers_in->{'Cookie'} ;
+	
+	warn 'Cookie is: ' . $cookie ;
+	
 	if( defined( $cookie ) && $cookie ne '' ) {
 		$cookie =~ s/^SESSION_ID=(\w+)(\;.+)?/$1/;
 	}
@@ -356,6 +370,8 @@ sub set_session{
 }
 
 sub destroy_session{
+	
+	warn 'Going to destroy session: ' . $session_id ;
 	
 	my %session ;
 	tie %session, 'Apache::Session::File', $session_id, $session_params;

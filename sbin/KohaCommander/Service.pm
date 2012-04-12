@@ -53,7 +53,12 @@ sub getInstance{
 	my $instance_name = $req->pnotes('requested_object') ;
 	my $path_info = $req->pnotes('path_info') ;
 	
-	$req->print( 'Getting info for instance: ' . $instance ) ;
+#	$req->print( 'Getting info for instance: ' . $instance_name . "\n" ) ;
+	
+	my $koha_command = KohaCommander::KOHA_COMMAND ;
+	my @output = qx( $koha_command info $instance_name );
+	
+	$req->print( @output );
 	
 }
 

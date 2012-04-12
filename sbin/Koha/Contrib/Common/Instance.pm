@@ -10,7 +10,7 @@ use Koha::Contrib::Common ;
 use Koha::Contrib::Common::Settings ;
 use Koha::Contrib::Common::Instance::Settings ;
 
-use fields qw( name settings user enabled mail_enabled indexer_running mysql_host mysql_port mysql_schema mysql_user ) ;
+use fields qw( name hostname intra_hostname settings user enabled mail_enabled indexer_running mysql_host mysql_port mysql_schema mysql_user ) ;
 
 our $error_msg = '' ;
 
@@ -208,6 +208,19 @@ sub get_instance_data{
 	$self->{ mysql_port }   = $self->{ settings }->read('port') ;
 	$self->{ mysql_schema } = $self->{ settings }->read('database') ;
 	$self->{ mysql_user }   = $self->{ settings }->read('user') ;
+	
+	#-----------------------------------------------------
+	# Get details from master config file(s)
+	# TODO: get these values from Apache instead
+	#
+	$self->{ hostname }       = $self->{ name }
+	 . Koha::Contrib::Common::Settings->read( 'DOMAIN' ) ;
+	 
+	$self->{ intra_hostname } = Koha::Contrib::Common::Settings->read( 'INTRAPREFIX' )
+	 . $self->{ name }
+	 . Koha::Contrib::Common::Settings->read( 'INTRASUFFIX' )
+	 . ( Koha::Contrib::Common::Settings->read( 'INTRAPORT' ) eq '80' ? '' : ':' . Koha::Contrib::Common::Settings->read( 'INTRAPORT' ) )
+	 . Koha::Contrib::Common::Settings->read( 'DOMAIN' ) ;
 }
 
 1 ;

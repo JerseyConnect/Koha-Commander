@@ -100,13 +100,21 @@ sub get_info{
 	my ($instance_name, $result_format ) = @_ ;
 	
 	my $instance = Koha::Contrib::Common::Instance->init( $instance_name ) ;
-	
-	if( $instance ) {
-		print $instance->{ enabled } ;
+
+	if( $instance->{ name } ) {
+
+		print $instance->{hostname} . "\n";
+		print $instance->{intra_hostname} . "\n";
+
+	} else {
+		print 'Instance was not found' ;
 	}
+	
+	
 }
 
 sub create{
+	
 	print 'Creating instance...' . "\n" ;
 	$instance_name = shift ;
 	

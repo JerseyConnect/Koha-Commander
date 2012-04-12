@@ -198,9 +198,19 @@ sub handler{
 
 #	push @messages, { %message } ;
 	
-	my %session = get_session();
+	my %session = get_session() ;
+	my $auth = {} ;
+	
+	if( $session{ logged_in } and $session{ username } ) {
+		KohaCommander::Auth->getUserInfo( $session{ username } );
+		$auth = {
+			hasInstances		=> KohaCommander::Auth->hasInstances(),
+			canCreateInstance	=> KohaCommander::Auth->canCreateInstance()
+		} ;
+	}
 	
 	my $tmpl_params = {
+		auth		=> $auth,
 		title	 	=> 'Koha Commander',
 		logged_in	=> $session{logged_in},
 		messages 	=> [ @tmpl_messages ]

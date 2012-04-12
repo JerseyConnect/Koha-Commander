@@ -76,6 +76,8 @@ sub canBrowseInstances{
 	
 	my KohaCommander::Auth $self = shift ;
 	# If username is of format 'koha_*', limit instance to username match
+	
+	
 }
 
 # Return whether user is authorized to view a particular Koha instance
@@ -120,6 +122,7 @@ sub canCreateInstance{
 	my KohaCommander::Auth $self = shift ;
 	my $instance_name = shift if $_ ;
 	
+	return $currentUser->{is_admin} ;
 }
 
 1 ;

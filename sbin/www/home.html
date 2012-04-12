@@ -4,12 +4,19 @@
 		allowing you to manage properties not exposed through the built-in management screens.</p>
 	<p>If your service provider allows it, you may also use this system to provision one or more new instances.</p>
 	[% IF auth.hasInstances %]
-	<h2>My Koha Instances</h2>
-	<ul>
-		[% FOREACH instance = auth.canBrowseInstances %]
-		<li></li>
+		<h2>
+			My Koha Instances 
+			[% IF auth.canCreateInstance %]<a href="/instances/create">Create a new Instance</a>[% END %]
+		</h2>
+		[% IF auth.canBrowseInstances %]
+		<ul>
+			[% FOREACH instance = auth.canBrowseInstances %]
+			<li></li>
+			[% END %]
+		</ul>
+		[% ELSE %]
+		<p>You currently have no instances on the system.</p>
 		[% END %]
-	</ul>
 	[% END %]
 	<ul class="menu options-menu">
 		<li>

@@ -1,0 +1,8 @@
+[% USE Dumper %]
+<body>
+	<h1>KohaCommander - [% instance.name %]</h1>
+	[% Dumper.dump(instance) %]
+	[% IF instance.data.enabled %]
+	<p>ENABLED!</p>
+	[% END %]
+</body>

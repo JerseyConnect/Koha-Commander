@@ -26,7 +26,10 @@ sub handler{
 	
 	if ( $req->uri() =~ m/^\/api\// ) {
 		
+		#
 		# A web service URL
+		#
+		
 		# Register all the appropriate handlers
 
 #		These require AuthType, AuthName, and Require in the appropriate Apache config block
@@ -93,7 +96,24 @@ sub handler{
 		
 	} else {
 		
+		#
 		# A normal web page URL
+		#
+		
+		if( my ( $instance_name, $sep, $action ) = $req->uri() =~ m/^\/instance\/([^\/]+)(\/?)(.*?)$/ ) {
+
+			$req->pnotes( 'path_info'	=> $action	) ;
+			
+			if( $instance_name eq 'create' ) {
+				$req->pnotes(	'action'	=> 'createInstance' ) ;
+			} else {
+				$req->pnotes(	'action'			=> 'getInstance' ) ;
+				$req->pnotes(	'requested_object'	=> $instance_name ) ;
+			}
+			
+		} else {
+			 $req->pnotes( 'action'	=> 'home' ) ;
+		}
 		
 		# Disable HTTP auth for non-service pages
 		$req->push_handlers( PerlAuthenHandler	=> \&return_OK ) ;

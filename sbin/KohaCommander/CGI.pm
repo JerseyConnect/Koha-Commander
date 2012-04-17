@@ -16,6 +16,7 @@ use KohaCommander::Auth ;
 
 use Data::Dumper ;
 
+our $template ;
 our $session_id ;
 our $session_params = {
 	Directory		=> '/tmp/koha-commander-sessions',
@@ -56,7 +57,7 @@ sub handler{
 
 	warn '-----------------------------------START ' . $path . $file_name . '---------------------------------' . "\n" ;
 
-	my $template = Template->new({ 
+	$template = Template->new({ 
 		INCLUDE_PATH  => "$websrc",
 		 PRE_PROCESS  => 'header.html',
 		POST_PROCESS  => 'footer.html',
@@ -177,8 +178,6 @@ sub handler{
 		
 	}
 	
-	$file_name = $file_name . '.html' ;
-
 	# BAD - generates a valid Hashref that can be included in an array def but cannot be push'd onto one
 #	my $message = {
 #		class	=> 'info',
@@ -191,6 +190,7 @@ sub handler{
 #		text	=> 'This is a test'
 #	) ;
 
+	# EXAMPLE: Array of hashes
 #	my @messages = [
 #		{ class=> 'a', text => 'AAA' }, 
 #		{ class=> 'b', text => 'bcD' }
@@ -217,6 +217,17 @@ sub handler{
 	} ;
 	
 	warn 'Building response for: ' . $path . $file_name ;
+
+	$req->print( 'Could not find the page you were requesting' ) 
+		and return Apache2::Const::OK
+		unless KohaCommander::CGI->can( $req->pnotes('action') ) ;
+	
+	my $action = $req->pnotes('action') ;
+	( $path, $file_name, $tmpl_params ) = KohaCommander::CGI->$action( $req, $path, $file_name, $tmpl_params ) ;
+
+	$file_name = $file_name . '.html' ;
+
+	warn 'Serving response for: ' . $path . $file_name ;
 	
 	$req->content_type('text/html');
 	
@@ -398,6 +409,74 @@ sub fail{
     my ($r, $status, $message) = @_ ;
 #    $r->log_reason($message, $r->filename) ;
     return $status ;
+}
+
+#-------------------------------------------------------------------
+# Dispatch URIs to functions
+#-------------------------------------------------------------------
+
+sub home {
+
+	my ( $self, $req, $path, $file_name, $tmpl_params ) = @_ ;
+	return ( $path, $file_name, $tmpl_params ) ;
+	
+}
+
+sub getInstance{
+
+	my ( $self, $req, $path, $file_name, $tmpl_params ) = @_ ;
+
+	$file_name = 'details' ;
+	
+	# Get instance details for $tmpl_params
+	my $instance_name = $req->pnotes( 'requested_object' ) ;
+	if( KohaCommander::Auth->canViewInstance( $instance_name ) ) {
+		
+		my $instance_info = KohaCommander::Auth->getInstanceInfo() ;
+
+		$tmpl_params->{ 'title' }	 = 'Koha Instance Details - ' . $instance_info->{instance}->{name} ;
+		
+		my %instance = (
+			name	=> $instance_info->{instance}->{name},
+			data	=> $instance_info->{instance}
+		) ;
+		$tmpl_params->{ 'instance' } = { %instance } ;
+		
+	} else {
+		
+		# If user is not authorized ( or instance doesn't exist ), return error page
+		$file_name = 'error' ;
+		$path = '' ;
+
+		# TODO: Find a better way to add error messages to the array (in a hash)
+		my @tmpl_messages = $tmpl_params->{messages} ;
+		push @tmpl_messages, { 
+			class => 'error', 
+			text  => 'You do not have access to the instance you requested'
+		} ;
+		$tmpl_params->{messages} = [ @tmpl_messages ] ;
+		
+	}
+	
+	
+	return ( $path, $file_name, $tmpl_params ) ;
+}
+
+sub createInstance{
+	
+	
+	my ( $self, $req, $path, $file_name, $tmpl_params ) = @_ ;
+
+#	my %args = map {$_ => $req->param($_) } $req->param;
+#	warn join "\n", map {"$_ => $args{$_}" } keys %args;
+
+	#TODO: check for instance details in POST and create, if allowed
+	if( my $instance_name = $req->param( 'instance_name' ) ) {
+		warn 'Got request to create an instance called: ' . $instance_name ;
+	}
+
+	return ( $path, $file_name, $tmpl_params ) ;
+	
 }
 
 1 ;

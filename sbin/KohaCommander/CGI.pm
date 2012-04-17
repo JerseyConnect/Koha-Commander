@@ -312,20 +312,24 @@ sub init_session{
 		
 		my ($err);
 		{
-			local $@;
+			local $@ ;
 			%session = eval {
 				my %sess ;
 				tie %sess, 'Apache::Session::File', $cookie, $session_params;
 				return %sess ;
 			} ;
-			$err = $@;
+			$err = $@ ;
 		}
 		if( $err ) {
-			warn 'There was an error building your session' ;
+			
+			# Create the session directory if it was wiped on boot
+			mkdir('/tmp/koha-commander-sessions/') unless (-d '/tmp/koha-commander-sessions/') ;
+			
+			warn 'There was an error building your session!: ' . $err ;
 			
 			undef $cookie ;
 			undef %session ;
-			tie %session, 'Apache::Session::File', $cookie, $session_params;
+			tie %session, 'Apache::Session::File', $cookie, $session_params ;
 		}
 		
 #		tie %session, 'Apache::Session::File', $cookie, $session_params;

@@ -13,8 +13,10 @@ Architecture goals
 RESTful web service
 	Accept HTTP Basic auth or POST param
 	Require authentication for access to all resources
-	Make all resources available in XML or JSON
-	Implement WSDL or equivalent resource discovery option
+	- supply error directing unauth'd users to web page for access
+	Make all resources available in XML or JSON 
+	- supply error if client requests invalid format
+	Implement resource discovery resource (WSDL or equivalent)
 	
 Web Interface
 	Implement Form-based login with session state

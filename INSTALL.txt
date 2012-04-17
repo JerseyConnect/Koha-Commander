@@ -8,6 +8,6 @@ You will need a few extra Perl modules regardless of your setup, eg.
 
 Depending on which authentication and authorization scheme you wish to use, there may be additional requirements.
 
-If you use the default auth scheme, you will need the Perl module Authen::PAM
+If you use the default auth scheme, you will also need the Perl module Authen::PAM.
 
 Specific requirements are in flux, and better documentation of dependencies will follow once things settle down.

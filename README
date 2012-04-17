@@ -1,7 +1,11 @@
 KohaCommander - a web interface and RESTful API for managing Koha instances created by koha-common
 
+Koha Commander is intended to allow remote provisioning and management of Koha instances on one or more systems, and to extend koha-common with support for:
+	- Multiple Koha instances owned by the same user
+	- One-step provisioning of instances with the database on another system
+
 This is a very young project. The current code represents only the barest bones, and should not be considered a functional release.
 
-See INSTALL.txt for installation instructions.
+See INSTALL.txt for brief installation instructions.
 
 For an idea of what to expect as Koha Commander develops, see GOALS.txt.

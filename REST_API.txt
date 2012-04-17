@@ -1,5 +1,7 @@
 #
-# RESTful API methods for Koha Commander
+# RESTful HTTP API methods for Koha Commander
+# This document is intended as a sketch of features to be created
+#  and not a set of canonical URIs
 #
 
 Method:		GET

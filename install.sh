@@ -2,7 +2,7 @@
 
 KOHA_COMMANDER_PATH=/usr/sbin/KohaCommander
 KOHA_COMMANDER_USER=koha-commander
-KOHA_COMMANDER_GROUP=admin
+KOHA_COMMANDER_GROUP=koha-commander
 HOSTNAME=`hostname -f`
 
 #
@@ -62,7 +62,7 @@ chmod +x ${KOHA_COMMANDER_PATH}/koha-command.pl
 #
 # Create a C wrapper for koha-command.pl so we can setuid in Perl >= 5.12
 #
-sed -i s|KOHA_COMMANDER_PATH|${KOHA_COMMANDER_PATH}| ${KOHA_COMMANDER_PATH}/koha-command.c
+sed -i "s|KOHA_COMMANDER_PATH|${KOHA_COMMANDER_PATH}|g" ${KOHA_COMMANDER_PATH}/koha-command.c
 cc -o ${KOHA_COMMANDER_PATH}/koha-command ${KOHA_COMMANDER_PATH}/koha-command.c
 
 #
